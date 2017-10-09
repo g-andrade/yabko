@@ -1,0 +1,15 @@
+{application, jablko,
+ [{description, "Apple Property Lists for Erlang 🍎"},
+  {vsn, git},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, ["Guilherme Andrade"]},
+  {licenses, ["MIT"]},
+  {links, [{"Github", "https://github.com/g-andrade/jablko"}]}
+ ]}.
