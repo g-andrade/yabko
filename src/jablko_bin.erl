@@ -116,15 +116,10 @@ decode_objects(Bin, Settings, InitialOffset) ->
 decode_objects_recur(<<>>, _Settings, _Offset, Acc) ->
     maps:from_list(Acc);
 decode_objects_recur(Bin, Settings, Offset, Acc) ->
-    try decode_object(Bin, Settings) of
-        {Value, Rest} ->
-            NewOffset = Offset + (byte_size(Bin) - byte_size(Rest)),
-            NewAcc = [{Offset, Value} | Acc],
-            decode_objects_recur(Rest, Settings, NewOffset, NewAcc)
-    catch
-        Class:Reason ->
-            erlang:raise(Class, {Reason, Acc}, erlang:get_stacktrace())
-    end.
+    {Value, Rest} = decode_object(Bin, Settings),
+    NewOffset = Offset + (byte_size(Bin) - byte_size(Rest)),
+    NewAcc = [{Offset, Value} | Acc],
+    decode_objects_recur(Rest, Settings, NewOffset, NewAcc).
 
 -spec decode_object(nonempty_binary(), settings()) -> {unresolved_object(), binary()}.
 decode_object(<<?SINGLETON:4, 0:4, Rest/binary>>, _Settings) ->
