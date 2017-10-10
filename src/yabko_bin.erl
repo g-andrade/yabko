@@ -27,6 +27,7 @@
 -define(UTF16, 6).
 -define(UID, 8).
 -define(ARRAY, 10).
+-define(SET, 12).
 -define(DICT, 13).
 
 -define(DATE_EPOCH, ({{2001,1,1},{0,0,0}})).
@@ -59,6 +60,7 @@
         {term, calendar:datetime()} |
         {term, {uid, yabko:uint64()}} |
         {array, [unresolved_object()]} |
+        {set, [unresolved_object()]} |
         {map, [{binary(), unresolved_object()}]}.
 
 -type object_offsets() ::
@@ -159,6 +161,7 @@ decode_object(<<TypeTag:4, SizeTag:4, Rest/binary>>, Settings)
        TypeTag =:= ?ASCII;
        TypeTag =:= ?UTF16;
        TypeTag =:= ?ARRAY;
+       TypeTag =:= ?SET;
        TypeTag =:= ?DICT
 ->
     {Size, Rest2} = decode_varsized_object_size(TypeTag, SizeTag, Settings, Rest),
@@ -197,6 +200,8 @@ calculate_varsized_object_size(?UTF16, Length, _Settings) ->
     Length * 2;
 calculate_varsized_object_size(?ARRAY, Length, Settings) ->
     Length * maps:get(ref_size, Settings);
+calculate_varsized_object_size(?SET, Length, Settings) ->
+    Length * maps:get(ref_size, Settings);
 calculate_varsized_object_size(?DICT, Length, Settings) ->
     Length * 2 * maps:get(ref_size, Settings).
 
@@ -208,6 +213,8 @@ decode_varsized_object_data(?UTF16, Data, _Settings) ->
     {term, unicode:characters_to_binary(Data, utf16)};
 decode_varsized_object_data(?ARRAY, Data, Settings) ->
     {array, decode_ref_sequence(Data, Settings)};
+decode_varsized_object_data(?SET, Data, Settings) ->
+    {set, decode_ref_sequence(Data, Settings)};
 decode_varsized_object_data(?DICT, Data, Settings) ->
     HalfDataSize = byte_size(Data) div 2,
     <<EncodedKeyRefs:HalfDataSize/binary, EncodedValueRefs:HalfDataSize/binary>> = Data,
@@ -258,6 +265,13 @@ reconstruct_tree(ResolvedObjects, #{ root_object_id := RootObjectId }) ->
 reconstruct_tree_recur({term, Value}, _ResolvedObjects) ->
     Value;
 reconstruct_tree_recur({array, RefList}, ResolvedObjects) ->
+    lists:map(
+      fun (Ref) ->
+              Value = maps:get(Ref, ResolvedObjects),
+              reconstruct_tree_recur(Value, ResolvedObjects)
+      end,
+      RefList);
+reconstruct_tree_recur({set, RefList}, ResolvedObjects) ->
     lists:map(
       fun (Ref) ->
               Value = maps:get(Ref, ResolvedObjects),
