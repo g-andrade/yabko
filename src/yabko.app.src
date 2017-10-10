@@ -4,7 +4,9 @@
   {registered, []},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    xmerl,
+    iso8601
    ]},
   {env,[]},
   {modules, []},

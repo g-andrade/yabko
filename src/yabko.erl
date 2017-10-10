@@ -37,7 +37,7 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
--spec decode(nonempty_binary()) -> {ok, object()} | {error, {exception, atom(), term(), [term()]}}.
+-spec decode(iodata()) -> {ok, object()} | {error, {exception, atom(), term(), [term()]}}.
 decode(<<"bplist", Version:2/binary, EncodedPList/binary>>) when Version =:= <<"00">>;
                                                                  Version =:= <<"01">> ->
     try yabko_bin:decode(EncodedPList, 8) of
@@ -45,7 +45,17 @@ decode(<<"bplist", Version:2/binary, EncodedPList/binary>>) when Version =:= <<"
     catch
         Class:Reason ->
             {error, {exception, Class, Reason, erlang:get_stacktrace()}}
-    end.
+    end;
+decode(<<EncodedPList/binary>>) ->
+    try yabko_xml:decode(EncodedPList) of
+        PList -> {ok, PList}
+    catch
+        Class:Reason ->
+            {error, {exception, Class, Reason, erlang:get_stacktrace()}}
+    end;
+decode(IoData) ->
+    Binary = iolist_to_binary(IoData),
+    decode(Binary).
 
 %% ------------------------------------------------------------------
 %% Unit Tests
