@@ -69,9 +69,11 @@ xml_decode_test() ->
     run_test__("test_data/test.xml.plist", {ok, expected_generic_test_data()}).
 
 uid_decode_bin_test() ->
+    % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.plist", {ok, expected_uid_test_data()}).
 
 uid_decode_xml_test() ->
+    % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
 
 expected_generic_test_data() ->
