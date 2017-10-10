@@ -68,6 +68,12 @@ bin_decode_test() ->
        {ok, expected_test_data()},
        decode(Encoded)).
 
+xml_decode_test() ->
+    {ok, Encoded} = file:read_file("test_data/test.xml.plist"),
+    ?assertEqual(
+       {ok, expected_test_data()},
+       decode(Encoded)).
+
 expected_test_data() ->
     #{<<"Lincoln">> =>
       #{<<"DOB">> => {{1809,2,12},{9,18,0}},
