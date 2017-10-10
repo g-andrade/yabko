@@ -1,12 +1,12 @@
 %% @private
--module(jablko_bin).
+-module(yabko_bin).
 
 % * http://fileformats.archiveteam.org/wiki/Property_List/Binary
 % * https://en.wikipedia.org/wiki/Property_list#macOS
 % * https://www.taksati.org/plists/
 % and misc. references glimpsed around the web
 
--include("jablko_common.hrl").
+-include("yabko_common.hrl").
 
 %% ------------------------------------------------------------------
 %% API Function Exports
@@ -55,10 +55,10 @@
 -type unresolved_object() ::
         {term, undefined} |
         {term, boolean()} |
-        {term, jablko:int64()} |
+        {term, yabko:int64()} |
         {term, float()} |
         {term, calendar:datetime()} |
-        {term, {uid, jablko:uint64()}} |
+        {term, {uid, yabko:uint64()}} |
         {array, [unresolved_object()]} |
         {set, [unresolved_object()]} |
         {map, [{binary(), unresolved_object()}]}.
@@ -72,7 +72,7 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
--spec decode(nonempty_binary(), non_neg_integer()) -> jablko:object() | no_return().
+-spec decode(nonempty_binary(), non_neg_integer()) -> yabko:object() | no_return().
 decode(EncodedPList, OffsetFromStart) ->
     TrailerOffset = byte_size(EncodedPList) - 32,
     <<EncodedObjectsAndOffsets:TrailerOffset/binary, Trailer:32/binary>> = EncodedPList,

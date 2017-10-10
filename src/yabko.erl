@@ -1,6 +1,6 @@
--module(jablko).
+-module(yabko).
 
--include("jablko_common.hrl").
+-include("yabko_common.hrl").
 
 %% ------------------------------------------------------------------
 %% API Function Exports
@@ -36,7 +36,7 @@
 -spec decode(nonempty_binary()) -> {ok, object()} | {error, {exception, atom(), term(), [term()]}}.
 decode(<<"bplist", Version:2/binary, EncodedPList/binary>>) when Version =:= <<"00">>;
                                                                  Version =:= <<"01">> ->
-    try jablko_bin:decode(EncodedPList, 8) of
+    try yabko_bin:decode(EncodedPList, 8) of
         PList -> {ok, PList}
     catch
         Class:Reason ->

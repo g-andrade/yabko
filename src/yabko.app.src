@@ -1,4 +1,4 @@
-{application, jablko,
+{application, yabko,
  [{description, "Apple Property Lists for Erlang 🍎"},
   {vsn, git},
   {registered, []},
@@ -11,5 +11,5 @@
 
   {maintainers, ["Guilherme Andrade"]},
   {licenses, ["MIT"]},
-  {links, [{"Github", "https://github.com/g-andrade/jablko"}]}
+  {links, [{"Github", "https://github.com/g-andrade/yabko"}]}
  ]}.
