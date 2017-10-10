@@ -175,7 +175,7 @@ decode_object(<<TypeTag:4, SizeTag:4, Rest/binary>>, Settings)
 
 decode_varsized_object_size(TypeTag, SizeTag, Settings, Data) ->
     {Length, Rest} = decode_varsized_object_length(SizeTag, Data),
-    Size = calculate_varsize_object_size(TypeTag, Length, Settings),
+    Size = calculate_varsized_object_size(TypeTag, Length, Settings),
     {Size, Rest}.
 
 decode_varsized_object_length(SizeTag, Data) when SizeTag =:= 15 ->
@@ -192,17 +192,17 @@ decode_varsized_object_extended_length(<<?INTEGER:4, 2:4, Size:32, Rest/binary>>
 decode_varsized_object_extended_length(<<?INTEGER:4, 3:4, Size:64, Rest/binary>>) ->
     {Size, Rest}.
 
-calculate_varsize_object_size(?BINARY, Length, _Settings) ->
+calculate_varsized_object_size(?BINARY, Length, _Settings) ->
     Length;
-calculate_varsize_object_size(?ASCII, Length, _Settings) ->
+calculate_varsized_object_size(?ASCII, Length, _Settings) ->
     Length;
-calculate_varsize_object_size(?UTF16, Length, _Settings) ->
+calculate_varsized_object_size(?UTF16, Length, _Settings) ->
     Length * 2;
-calculate_varsize_object_size(?ARRAY, Length, Settings) ->
+calculate_varsized_object_size(?ARRAY, Length, Settings) ->
     Length * maps:get(ref_size, Settings);
-calculate_varsize_object_size(?SET, Length, Settings) ->
+calculate_varsized_object_size(?SET, Length, Settings) ->
     Length * maps:get(ref_size, Settings);
-calculate_varsize_object_size(?DICT, Length, Settings) ->
+calculate_varsized_object_size(?DICT, Length, Settings) ->
     Length * 2 * maps:get(ref_size, Settings).
 
 decode_varsized_object_data(?BINARY, Data, _Settings) ->
