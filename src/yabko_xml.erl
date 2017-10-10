@@ -14,7 +14,9 @@
 %% Macro Definitions
 %% ------------------------------------------------------------------
 
--define(is_int64(V), ((V) >= -9223372036854775808 andalso ((V) =< 9223372036854775807))).
+-define(is_between(V, Min, Max), ((V) >= (Min) andalso (V) =< (Max))).
+-define(is_int64(V), ?is_between(V, -9223372036854775808, 9223372036854775807)).
+-define(is_uint64(V), ?is_between(V, 0, 18446744073709551615)).
 
 -define(assert(Condition), ((Condition) orelse exit(assertion_failed))).
 
@@ -55,9 +57,6 @@ decode_element(#xmlElement{ name = real } = Element) ->
 decode_element(#xmlElement{ name = date } = Element) ->
     EncodedDate = extract_element_text(Element),
     iso8601:parse(EncodedDate);
-%%
-%% TODO uid?
-%%
 decode_element(#xmlElement{ name = data } = Element) ->
     EncodedData = extract_element_text(Element),
     base64:decode(EncodedData);
@@ -82,7 +81,13 @@ decode_dict_elements_recur([KeyElement, ValueElement | Next], Acc) ->
     Value = decode_element(ValueElement),
     decode_dict_elements_recur(Next, [{Key,Value} | Acc]);
 decode_dict_elements_recur([], Acc) ->
-    maps:from_list(Acc).
+    case Acc of
+        [{<<"CF$UID">>, Integer}] when ?is_uint64(Integer) ->
+            % UID - special case
+            {uid, Integer};
+        _ ->
+            maps:from_list(Acc)
+    end.
 
 extract_key_element_text(#xmlElement{ name = key } = Element) ->
     extract_element_text(Element).
