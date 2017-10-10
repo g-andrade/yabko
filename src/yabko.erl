@@ -63,18 +63,18 @@ decode(IoData) ->
 -ifdef(TEST).
 
 bin_decode_test() ->
-    {ok, Encoded} = file:read_file("test_data/test.bin.plist"),
-    ?assertEqual(
-       {ok, expected_test_data()},
-       decode(Encoded)).
+    run_test__("test_data/test.bin.plist", {ok, expected_generic_test_data()}).
 
 xml_decode_test() ->
-    {ok, Encoded} = file:read_file("test_data/test.xml.plist"),
-    ?assertEqual(
-       {ok, expected_test_data()},
-       decode(Encoded)).
+    run_test__("test_data/test.xml.plist", {ok, expected_generic_test_data()}).
 
-expected_test_data() ->
+uid_decode_bin_test() ->
+    run_test__("test_data/uid-list.plist", {ok, expected_uid_test_data()}).
+
+uid_decode_xml_test() ->
+    run_test__("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
+
+expected_generic_test_data() ->
     #{<<"Lincoln">> =>
       #{<<"DOB">> => {{1809,2,12},{9,18,0}},
         <<"Eulogy">> =>
@@ -100,5 +100,12 @@ expected_test_data() ->
         <<"IsNamedGeorge">> => true,
         <<"Name">> => <<"George Washington">>,
         <<"Scores">> => [6,4.599999904632568,6]}}.
+
+expected_uid_test_data() ->
+    #{<<"test">> => {uid,1}}.
+
+run_test__(Path, ExpectedResult) ->
+    {ok, Encoded} = file:read_file(Path),
+    ?assertEqual(ExpectedResult, decode(Encoded)).
 
 -endif.
