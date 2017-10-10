@@ -66,9 +66,6 @@ decode_element(#xmlElement{ name = string } = Element) ->
     <<_/binary>> = unicode:characters_to_binary(Data, utf8);
 decode_element(#xmlElement{ name = array } = Element) ->
     decode_elements(Element#xmlElement.content);
-%%
-%% TODO set?
-%%
 decode_element(#xmlElement{ name = dict } = Element) ->
     decode_dict_elements(Element#xmlElement.content).
 
