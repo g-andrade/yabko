@@ -12,8 +12,8 @@
         <array>
             <integer>8</integer> <!-- int8 -->
             <integer>-8</integer> <!-- int8 -->
-            <integer>512></integer> <!-- int16 -->
-            <integer>-512></integer> <!-- int16 -->
+            <integer>512</integer> <!-- int16 -->
+            <integer>-512</integer> <!-- int16 -->
             <integer>65536</integer> <!-- int32 -->
             <integer>-65536</integer> <!-- int32 -->
             <integer>4294967296</integer> <!-- int64 -->
