@@ -37,3 +37,6 @@ test:
 
 cover: test
 	@$(REBAR3) as test cover
+
+console:
+	@$(REBAR3) as development shell --apps yabko
