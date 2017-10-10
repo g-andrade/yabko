@@ -33,11 +33,9 @@ decode(Binary) ->
 %% ------------------------------------------------------------------
 
 decode_root(#xmlElement{ name = plist } = Element) ->
-    decode_elements(Element#xmlElement.content).
-
-decode_elements(List) ->
-    Filtered = filter_relevant_sequence_elements(List),
-    lists:map(fun decode_element/1, Filtered).
+    Children = Element#xmlElement.content,
+    [RootElement] = filter_relevant_sequence_elements(Children),
+    decode_element(RootElement).
 
 %%
 %% TODO null?
@@ -73,6 +71,10 @@ decode_element(#xmlElement{ name = array } = Element) ->
 %%
 decode_element(#xmlElement{ name = dict } = Element) ->
     decode_dict_elements(Element#xmlElement.content).
+
+decode_elements(List) ->
+    Filtered = filter_relevant_sequence_elements(List),
+    lists:map(fun decode_element/1, Filtered).
 
 decode_dict_elements(Elements) ->
     Filtered = filter_relevant_sequence_elements(Elements),
