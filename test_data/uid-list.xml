@@ -2,10 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>test</key>
+    <key>small</key>
     <dict>
       <key>CF$UID</key>
       <integer>1</integer>
+    </dict>
+    <key>medium</key>
+    <dict>
+      <key>CF$UID</key>
+      <integer>256</integer>
+    </dict>
+    <key>large</key>
+    <dict>
+      <key>CF$UID</key>
+      <integer>65536</integer>
+    </dict>
+    <key>huge</key>
+    <dict>
+      <key>CF$UID</key>
+      <integer>4294967296</integer>
     </dict>
   </dict>
 </plist>

@@ -117,7 +117,10 @@ expected_generic_test_data() ->
         <<"Scores">> => [6,4.599999904632568,6]}}.
 
 expected_uid_test_data() ->
-    #{<<"test">> => {uid,1}}.
+    #{<<"small">> => {uid,1},
+      <<"medium">> => {uid,256},
+      <<"large">> => {uid,65536},
+      <<"huge">> => {uid,4294967296}}.
 
 expected_unicode_test_data() ->
     #{<<"A thing">> =>
