@@ -1,3 +1,26 @@
+%% Copyright (c) 2017 Guilherme Andrade <yabko@gandrade.net>
+%%
+%% Permission is hereby granted, free of charge, to any person obtaining a
+%% copy  of this software and associated documentation files (the "Software"),
+%% to deal in the Software without restriction, including without limitation
+%% the rights to use, copy, modify, merge, publish, distribute, sublicense,
+%% and/or sell copies of the Software, and to permit persons to whom the
+%% Software is furnished to do so, subject to the following conditions:
+%%
+%% The above copyright notice and this permission notice shall be included in
+%% all copies or substantial portions of the Software.
+%%
+%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+%% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+%% DEALINGS IN THE SOFTWARE.
+%%
+%% Yabko is an independent project and has not been authorized, sponsored,
+%% or otherwise approved by Apple Inc.
+
 -module(yabko).
 
 -include("yabko_common.hrl").
@@ -62,33 +85,42 @@ decode(IoData) ->
 %% ------------------------------------------------------------------
 -ifdef(TEST).
 
+%% @private
 bin_decode_test() ->
     run_test__("test_data/test.bin.plist", {ok, expected_generic_test_data()}).
 
+%% @private
 xml_decode_test() ->
     run_test__("test_data/test.xml.plist", {ok, expected_generic_test_data()}).
 
+%% @private
 uid_decode_bin_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.plist", {ok, expected_uid_test_data()}).
 
+%% @private
 uid_decode_xml_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
 
+%% @private
 bin_unicode_decode_test() ->
     run_test__("test_data/unicode.bin.plist", {ok, expected_unicode_test_data()}).
 
+%% @private
 xml_unicode_decode_test() ->
     run_test__("test_data/unicode.xml.plist", {ok, expected_unicode_test_data()}).
 
+%% @private
 float32_decode_test() ->
     run_test__("test_data/float32.bin.plist", {ok, #{<<"etc etc..">> => 1.0}}).
 
+%% @private
 run_test__(Path, ExpectedResult) ->
     {ok, Encoded} = file:read_file(Path),
     ?assertEqual(ExpectedResult, decode(Encoded)).
 
+%% @private
 expected_generic_test_data() ->
     #{<<"Lincoln">> =>
       #{<<"DOB">> => {{1809,2,12},{9,18,0}},
@@ -116,12 +148,14 @@ expected_generic_test_data() ->
         <<"Name">> => <<"George Washington">>,
         <<"Scores">> => [6,4.599999904632568,6]}}.
 
+%% @private
 expected_uid_test_data() ->
     #{<<"small">> => {uid,1},
       <<"medium">> => {uid,256},
       <<"large">> => {uid,65536},
       <<"huge">> => {uid,4294967296}}.
 
+%% @private
 expected_unicode_test_data() ->
     #{<<"A thing">> =>
       <<"他度於樂。實術醫收參不民對續子義發性親的論草像終因："

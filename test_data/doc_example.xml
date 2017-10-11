@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Name</key>
+    <string>John Doé</string>
+    <key>Date of birth</key>
+    <date>1973-02-12T09:18:00Z</date>
+    <key>Owned foobars</key>
+    <integer>4321</integer>
+    <key>Codswallop ratio</key>
+    <real>3.14159265359</real>
+    <key>Pocket contents</key>
+    <array>
+        <integer>42</integer>
+        <string>Lorem ipsum</string>
+        <dict>
+            <key>CF$UID</key>
+            <integer>123456</integer>
+        </dict>
+    </array>
+</dict>
+</plist>

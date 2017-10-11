@@ -10,7 +10,7 @@ ifeq ($(REBAR3),)
 	REBAR3 = $(CURDIR)/rebar3
 endif
 
-.PHONY: all build clean check dialyzer xref test cover
+.PHONY: all build clean check dialyzer xref test cover console doc
 
 all: build
 
@@ -40,3 +40,6 @@ cover: test
 
 console:
 	@$(REBAR3) as development shell --apps yabko
+
+doc: build
+	./scripts/hackish_make_docs.sh
