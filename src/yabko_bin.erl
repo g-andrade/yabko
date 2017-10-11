@@ -232,13 +232,13 @@ calculate_varsized_object_size(?DICT, Length, Settings) ->
     Length * 2 * maps:get(ref_size, Settings).
 
 decode_varsized_object_data(?BINARY, Data, _Settings) ->
-    {term, Data};
+    {term, binary:copy(Data)};
 decode_varsized_object_data(?ASCII, Data, _Settings) ->
     <<Decoded/binary>> = unicode:characters_to_binary(Data, latin1),
-    {term, Decoded};
+    {term, binary:copy(Decoded)};
 decode_varsized_object_data(?UTF16, Data, _Settings) ->
     <<Decoded/binary>> = unicode:characters_to_binary(Data, utf16),
-    {term, Decoded};
+    {term, binary:copy(Decoded)};
 decode_varsized_object_data(?ARRAY, Data, Settings) ->
     {array, decode_ref_sequence(Data, Settings)};
 decode_varsized_object_data(?SET, Data, Settings) ->

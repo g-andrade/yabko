@@ -115,7 +115,8 @@ extract_key_element_text(#xmlElement{ name = key } = Element) ->
 extract_element_text(Element, InEncoding) ->
     Content = Element#xmlElement.content,
     #xmlText{ value = Text } = lists:keyfind(xmlText, 1, Content),
-    <<_/binary>> = unicode:characters_to_binary(Text, InEncoding).
+    <<Binary/binary>> = unicode:characters_to_binary(Text, InEncoding),
+    binary:copy(Binary).
 
 filter_relevant_sequence_elements(List) ->
     lists:filter(fun is_relevant_sequence_element/1, List).
