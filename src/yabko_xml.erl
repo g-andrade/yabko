@@ -47,22 +47,21 @@ decode_element(#xmlElement{ name = false }) ->
 decode_element(#xmlElement{ name = true }) ->
     true;
 decode_element(#xmlElement{ name = integer } = Element) ->
-    EncodedInt = extract_element_text(Element),
+    EncodedInt = extract_element_text(Element, latin1),
     Int = binary_to_integer(EncodedInt),
     true = ?is_int64(Int),
     Int;
 decode_element(#xmlElement{ name = real } = Element) ->
-    EncodedFloat = extract_element_text(Element),
+    EncodedFloat = extract_element_text(Element, latin1),
     binary_to_float(EncodedFloat);
 decode_element(#xmlElement{ name = date } = Element) ->
-    EncodedDate = extract_element_text(Element),
+    EncodedDate = extract_element_text(Element, latin1),
     iso8601:parse(EncodedDate);
 decode_element(#xmlElement{ name = data } = Element) ->
-    EncodedData = extract_element_text(Element),
+    EncodedData = extract_element_text(Element, latin1),
     base64:decode(EncodedData);
 decode_element(#xmlElement{ name = string } = Element) ->
-    Data = extract_element_text(Element),
-    <<_/binary>> = unicode:characters_to_binary(Data, utf8);
+    extract_element_text(Element, utf8);
 decode_element(#xmlElement{ name = array } = Element) ->
     decode_elements(Element#xmlElement.content);
 decode_element(#xmlElement{ name = dict } = Element) ->
@@ -90,12 +89,12 @@ decode_dict_elements_recur([], Acc) ->
     end.
 
 extract_key_element_text(#xmlElement{ name = key } = Element) ->
-    extract_element_text(Element).
+    extract_element_text(Element, utf8).
 
-extract_element_text(Element) ->
+extract_element_text(Element, InEncoding) ->
     Content = Element#xmlElement.content,
     #xmlText{ value = Text } = lists:keyfind(xmlText, 1, Content),
-    iolist_to_binary(Text).
+    <<_/binary>> = unicode:characters_to_binary(Text, InEncoding).
 
 filter_relevant_sequence_elements(List) ->
     lists:filter(fun is_relevant_sequence_element/1, List).
