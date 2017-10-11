@@ -1,5 +1,5 @@
 {application, yabko,
- [{description, "Apple Property Lists for Erlang 🍎"},
+ [{description, "Apple Property Lists 🍎"},
   {vsn, git},
   {registered, []},
   {applications,
