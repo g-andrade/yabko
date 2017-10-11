@@ -28,7 +28,7 @@
 
 #### <a name="Requirements">Requirements</a> ####
 
-* Erlang/OTP 19
+* Erlang/OTP 17
 * rebar3
 
 
