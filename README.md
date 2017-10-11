@@ -6,7 +6,7 @@
 [![Hex pm](http://img.shields.io/hexpm/v/yabko.svg?style=flat)](https://hex.pm/packages/yabko)
 
 
-### <a name="yabko_-_Apple_Property_Lists_for_Erlang">yabko - Apple Property Lists for Erlang</a> ###
+### <a name="yabko_-_Erlang_parser_of_Apple_Property_Lists_(.plist)">yabko - Erlang parser of Apple Property Lists (.plist)</a> ###
 
 
 #### <a name="Decodable_data_types">Decodable data types</a> ####
