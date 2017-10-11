@@ -25,7 +25,7 @@
 * Erlang/OTP 17
 * rebar3
 
-=== Usage ===
+=== Example Usage ===
 <pre>
 $ make console
 </pre>

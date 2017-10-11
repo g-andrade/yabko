@@ -32,7 +32,7 @@
 * rebar3
 
 
-#### <a name="Usage">Usage</a> ####
+#### <a name="Example_Usage">Example Usage</a> ####
 
 
 ```
