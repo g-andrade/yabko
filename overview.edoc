@@ -22,7 +22,7 @@
 * dictionaries
 
 === Requirements ===
-* Erlang/OTP 19
+* Erlang/OTP 17
 * rebar3
 
 === Usage ===
