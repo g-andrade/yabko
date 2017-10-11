@@ -32,7 +32,7 @@
 
 -define(DATE_EPOCH, ({{2001,1,1},{0,0,0}})).
 
--define(assert(Condition), ((Condition) orelse exit(assertion_failed))).
+-define(assert(Condition, OrElse), ((Condition) orelse error(OrElse))).
 
 %% ------------------------------------------------------------------
 %% Type Definitions
@@ -83,7 +83,8 @@ decode(EncodedPList, OffsetFromStart) ->
     RealOffsetTableOffset = OffsetTableOffset - OffsetFromStart,
     <<EncodedObjects:RealOffsetTableOffset/binary, OffsetTable/binary>> = EncodedObjectsAndOffsets,
     ObjectsPerOffset = decode_objects(EncodedObjects, Settings, OffsetFromStart),
-    ?assert(map_size(ObjectsPerOffset) =< NumberOfObjects),
+    ?assert(map_size(ObjectsPerOffset) =< NumberOfObjects,
+            {mismatched_number_of_objects, ObjectsPerOffset, NumberOfObjects}),
     OffsetPerObjectId = decode_object_offsets(OffsetTable, Settings),
     ResolvedObjects = resolve_object_refs(ObjectsPerOffset, OffsetPerObjectId),
     reconstruct_tree(ResolvedObjects, Settings).
@@ -259,41 +260,52 @@ resolve_object_refs(ObjectsPerOffset, OffsetPerObjectId) ->
 
 reconstruct_tree(ResolvedObjects, #{ root_object_id := RootObjectId }) ->
     RootObject = maps:get(RootObjectId, ResolvedObjects),
-    reconstruct_tree_recur(RootObject, ResolvedObjects).
+    reconstruct_tree_recur(RootObject, ResolvedObjects, [RootObjectId]).
 
 %
 % TODO optimize the following (we're doing more object reconstructions than needed)
 %
-reconstruct_tree_recur({term, Value}, _ResolvedObjects) ->
+reconstruct_tree_recur({term, Value}, _ResolvedObjects, _RefPath) ->
     Value;
-reconstruct_tree_recur({array, RefList}, ResolvedObjects) ->
+reconstruct_tree_recur({array, RefList}, ResolvedObjects, RefPath) ->
     lists:map(
       fun (Ref) ->
+              assert_lack_of_cycles(Ref, RefPath),
               Value = maps:get(Ref, ResolvedObjects),
-              reconstruct_tree_recur(Value, ResolvedObjects)
+              reconstruct_tree_recur(
+                Value, ResolvedObjects, [Ref | RefPath])
       end,
       RefList);
-reconstruct_tree_recur({set, RefList}, ResolvedObjects) ->
+reconstruct_tree_recur({set, RefList}, ResolvedObjects, RefPath) ->
     List =
         lists:map(
           fun (Ref) ->
+                  assert_lack_of_cycles(Ref, RefPath),
                   Value = maps:get(Ref, ResolvedObjects),
-                  reconstruct_tree_recur(Value, ResolvedObjects)
+                  reconstruct_tree_recur(
+                    Value, ResolvedObjects, [Ref | RefPath])
           end,
           RefList),
     Set = ordsets:from_list(List),
     ordsets:to_list(Set);
-reconstruct_tree_recur({map, RefKVList}, ResolvedObjects) ->
+reconstruct_tree_recur({map, RefKVList}, ResolvedObjects, RefPath) ->
     KVList =
         lists:map(
           fun ({KeyRef, ValueRef}) ->
+                  assert_lack_of_cycles(KeyRef, RefPath),
+                  assert_lack_of_cycles(ValueRef, RefPath),
                   Key = maps:get(KeyRef, ResolvedObjects),
                   Value = maps:get(ValueRef, ResolvedObjects),
-                  {reconstruct_tree_recur(Key, ResolvedObjects),
-                   reconstruct_tree_recur(Value, ResolvedObjects)}
+                  {reconstruct_tree_recur(
+                     Key, ResolvedObjects, [KeyRef | RefPath]),
+                   reconstruct_tree_recur(
+                     Value, ResolvedObjects, [ValueRef | RefPath])}
           end,
           RefKVList),
     maps:from_list(KVList).
+
+assert_lack_of_cycles(Ref, RefPathSoFar) ->
+    lists:member(Ref, RefPathSoFar) andalso error({cycling_reference, Ref, RefPathSoFar}).
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions - Utilities
