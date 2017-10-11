@@ -64,5 +64,5 @@ Yabko is an independent project and has not been authorized, sponsored, or other
 
 
 <table width="100%" border="0" summary="list of modules">
-<tr><td><a href="https://github.com/g-andrade/yabko/blob/release/0.2.0/doc/yabko.md" class="module">yabko</a></td></tr></table>
+<tr><td><a href="https://github.com/g-andrade/yabko/blob/master/doc/yabko.md" class="module">yabko</a></td></tr></table>
 

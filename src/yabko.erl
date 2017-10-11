@@ -60,7 +60,11 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
--spec decode(iodata()) -> {ok, object()} | {error, {exception, atom(), term(), [term()]}}.
+-spec decode(Data) -> {ok, DecodedObject} | {error, Error}
+        when Data :: iodata(),
+             DecodedObject :: object(),
+             Error :: {exception, atom(), term(), [term()]}.
+
 decode(<<"bplist", Version:2/binary, EncodedPList/binary>>) when Version =:= <<"00">>;
                                                                  Version =:= <<"01">> ->
     try yabko_bin:decode(EncodedPList, 8) of

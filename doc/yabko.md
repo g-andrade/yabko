@@ -56,7 +56,8 @@ uint64() = 0..18446744073709551615
 ### decode/1 ###
 
 <pre><code>
-decode(IoData::iodata()) -&gt; {ok, <a href="#type-object">object()</a>} | {error, {exception, atom(), term(), [term()]}}
+decode(Data) -&gt; {ok, <a href="#type-object">object()</a>} | {error, Error}
 </code></pre>
-<br />
+
+<ul class="definitions"><li><code>Data = iodata()</code></li><li><code>Error = {error, {exception, atom(), term(), [term()]}}</code></li></ul>
 
