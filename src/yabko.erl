@@ -76,6 +76,17 @@ uid_decode_xml_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
 
+bin_unicode_decode_test() ->
+    run_test__("test_data/unicode.bin.plist", {ok, expected_unicode_test_data()}).
+
+xml_unicode_decode_test() ->
+    run_test__("test_data/unicode.xml.plist", {ok, expected_unicode_test_data()}).
+
+
+run_test__(Path, ExpectedResult) ->
+    {ok, Encoded} = file:read_file(Path),
+    ?assertEqual(ExpectedResult, decode(Encoded)).
+
 expected_generic_test_data() ->
     #{<<"Lincoln">> =>
       #{<<"DOB">> => {{1809,2,12},{9,18,0}},
@@ -106,8 +117,13 @@ expected_generic_test_data() ->
 expected_uid_test_data() ->
     #{<<"test">> => {uid,1}}.
 
-run_test__(Path, ExpectedResult) ->
-    {ok, Encoded} = file:read_file(Path),
-    ?assertEqual(ExpectedResult, decode(Encoded)).
+expected_unicode_test_data() ->
+    #{<<"A thing">> =>
+      <<"他度於樂。實術醫收參不民對續子義發性親的論草像終因："
+        "地己關物理應在她決精……在論被主馬路兩關保分怕件比人"
+        "……孩經感發特，那經情你相，破族木相資個外生"
+        "。熱民待……天女度之竟賽外的史次道就就只……動技會，"
+        "世國系笑早，四司作方極中面：晚寫許或美大下正人濟"
+        "保樂這候可著了下供半於受下唱素動古下。"/utf8>>}.
 
 -endif.
