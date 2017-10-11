@@ -1,7 +1,7 @@
 {application, yabko,
  %% Yabko is an independent project and has not been authorized, sponsored,
  %% or otherwise approved by Apple Inc.
- [{description, "🍎 Apple Property Lists parser"},
+ [{description, "A parser of Apple Property Lists 🍎"},
   {vsn, git},
   {registered, []},
   {applications,
