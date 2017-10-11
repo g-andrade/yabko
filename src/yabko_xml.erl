@@ -18,8 +18,6 @@
 -define(is_int64(V), ?is_between(V, -9223372036854775808, 9223372036854775807)).
 -define(is_uint64(V), ?is_between(V, 0, 18446744073709551615)).
 
--define(assert(Condition), ((Condition) orelse exit(assertion_failed))).
-
 %% ------------------------------------------------------------------
 %% API Function Definitions
 %% ------------------------------------------------------------------
