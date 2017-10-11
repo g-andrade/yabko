@@ -274,12 +274,15 @@ reconstruct_tree_recur({array, RefList}, ResolvedObjects) ->
       end,
       RefList);
 reconstruct_tree_recur({set, RefList}, ResolvedObjects) ->
-    lists:map(
-      fun (Ref) ->
-              Value = maps:get(Ref, ResolvedObjects),
-              reconstruct_tree_recur(Value, ResolvedObjects)
-      end,
-      RefList);
+    List =
+        lists:map(
+          fun (Ref) ->
+                  Value = maps:get(Ref, ResolvedObjects),
+                  reconstruct_tree_recur(Value, ResolvedObjects)
+          end,
+          RefList),
+    Set = ordsets:from_list(List),
+    ordsets:to_list(Set);
 reconstruct_tree_recur({map, RefKVList}, ResolvedObjects) ->
     KVList =
         lists:map(
