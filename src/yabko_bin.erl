@@ -64,11 +64,11 @@
 %% ------------------------------------------------------------------
 
 -type settings() ::
-        #{ offset_size := 1..4,
-           ref_size := 1 | 2,
-           number_of_objects := uint32(),
-           root_object_id := uint32(),
-           offset_table_offset := offset() }.
+        #{ offset_size => 1..4,
+           ref_size => 1 | 2,
+           number_of_objects => uint32(),
+           root_object_id => uint32(),
+           offset_table_offset => offset() }.
 
 -type uint32() :: 0..4294967295.
 
