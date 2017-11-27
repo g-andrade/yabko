@@ -157,14 +157,9 @@ decode_object(<<?SINGLETON:4, 9:4, Rest/binary>>, _Settings) ->
 decode_object(<<?SINGLETON:4, 15:4, Rest/binary>>, Settings) ->
     % fill byte; skip it
     decode_object(Rest, Settings);
-decode_object(<<?INTEGER:4, 0:4, Int8/signed, Rest/binary>>, _Settings) ->
-    {{term, Int8}, Rest};
-decode_object(<<?INTEGER:4, 1:4, Int16:16/signed, Rest/binary>>, _Settings) ->
-    {{term, Int16}, Rest};
-decode_object(<<?INTEGER:4, 2:4, Int32:32/signed, Rest/binary>>, _Settings) ->
-    {{term, Int32}, Rest};
-decode_object(<<?INTEGER:4, 3:4, Int64:64/signed, Rest/binary>>, _Settings) ->
-    {{term, Int64}, Rest};
+decode_object(<<?INTEGER:4, _/bits>> = Data, _Settings) ->
+    {Uint, Rest} = decode_integer(Data),
+    {{term, Uint}, Rest};
 decode_object(<<?FLOAT:4, 2:4, Float32:32/float, Rest/binary>>, _Settings) ->
     {{term, Float32}, Rest};
 decode_object(<<?FLOAT:4, 3:4, Float64:64/float, Rest/binary>>, _Settings) ->
@@ -205,18 +200,18 @@ decode_varsized_object_size(TypeTag, SizeTag, Settings, Data) ->
     {Size, Rest}.
 
 decode_varsized_object_length(SizeTag, Data) when SizeTag =:= 15 ->
-    decode_varsized_object_extended_length(Data);
+    decode_integer(Data);
 decode_varsized_object_length(SizeTag, Data) ->
     {SizeTag, Data}.
 
-decode_varsized_object_extended_length(<<?INTEGER:4, 0:4, Size, Rest/binary>>) ->
-    {Size, Rest};
-decode_varsized_object_extended_length(<<?INTEGER:4, 1:4, Size:16, Rest/binary>>) ->
-    {Size, Rest};
-decode_varsized_object_extended_length(<<?INTEGER:4, 2:4, Size:32, Rest/binary>>) ->
-    {Size, Rest};
-decode_varsized_object_extended_length(<<?INTEGER:4, 3:4, Size:64, Rest/binary>>) ->
-    {Size, Rest}.
+decode_integer(<<?INTEGER:4, 0:4, Uint8, Rest/binary>>) ->
+    {Uint8, Rest};
+decode_integer(<<?INTEGER:4, 1:4, Uint16:16, Rest/binary>>) ->
+    {Uint16, Rest};
+decode_integer(<<?INTEGER:4, 2:4, Uint32:32, Rest/binary>>) ->
+    {Uint32, Rest};
+decode_integer(<<?INTEGER:4, 3:4, Int64:64/signed, Rest/binary>>) ->
+    {Int64, Rest}.
 
 calculate_varsized_object_size(?BINARY, Length, _Settings) ->
     Length;
