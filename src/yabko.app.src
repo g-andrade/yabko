@@ -14,5 +14,7 @@
   {modules, []},
 
   {licenses, ["MIT"]},
-  {links, [{"Github", "https://github.com/g-andrade/yabko"}]}
+  {links, [{"GitHub", "https://github.com/g-andrade/yabko"},
+           {"GitLab", "https://gitlab.com/g-andrade/yabko"}
+          ]}
  ]}.
