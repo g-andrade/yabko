@@ -2,8 +2,9 @@
 
 # yabko #
 
-[![Build Status](https://travis-ci.org/g-andrade/yabko.png?branch=master)](https://travis-ci.org/g-andrade/yabko)
 [![Hex pm](http://img.shields.io/hexpm/v/yabko.svg?style=flat)](https://hex.pm/packages/yabko)
+[![Travis CI Build Status](https://travis-ci.org/g-andrade/yabko.png?branch=master)](https://travis-ci.org/g-andrade/yabko)
+[![Circle CI Build Status](https://circleci.com/gh/g-andrade/yabko/tree/master.svg?style=svg)](https://circleci.com/gh/g-andrade/yabko/tree/master)
 
 
 ### <a name="yabko_-_Erlang_parser_of_Apple_Property_Lists_(.plist)">yabko - Erlang parser of Apple Property Lists (.plist)</a> ###
@@ -47,7 +48,11 @@ $ make console
 {ok,<<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist "...>>}
 
 % 2> yabko:decode(XmlEncoded).
-{ok,#{<<"Codswallop ratio">> => 3.14159265359,<<"Date of birth">> => {{1973,2,12},{9,18,0}},<<"Name">> => <<"John Doé"/utf8>>,<<"Owned foobars">> => 4321,<<"Pocket contents">> =>
+{ok,#{<<"Codswallop ratio">> => 3.14159265359,
+      <<"Date of birth">> => {{1973,2,12},{9,18,0}},
+      <<"Name">> => <<"John Doé"/utf8>>,
+      <<"Owned foobars">> => 4321,
+      <<"Pocket contents">> =>
           [42,<<"Lorem ipsum">>,{uid,123456}]}}
 
 % 3> {ok, BinEncoded} = file:read_file("test_data/float32.bin.plist").

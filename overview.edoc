@@ -1,8 +1,9 @@
 @title yabko
 @doc
 
-[![Build Status](https://travis-ci.org/g-andrade/yabko.png?branch=master)](https://travis-ci.org/g-andrade/yabko)
 [![Hex pm](http://img.shields.io/hexpm/v/yabko.svg?style=flat)](https://hex.pm/packages/yabko)
+[![Travis CI Build Status](https://travis-ci.org/g-andrade/yabko.png?branch=master)](https://travis-ci.org/g-andrade/yabko)
+[![Circle CI Build Status](https://circleci.com/gh/g-andrade/yabko/tree/master.svg?style=svg)](https://circleci.com/gh/g-andrade/yabko/tree/master)
 
 == yabko - Erlang parser of Apple Property Lists (.plist) ==
 
