@@ -1,2 +1,4 @@
+-if(?OTP_RELEASE < 24).
 -type nonempty_binary() :: <<_:8,_:_*8>>.
+-endif.
 -export_type([nonempty_binary/0]).
