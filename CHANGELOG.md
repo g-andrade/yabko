@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - CHANGELOG.md
 - CI through GitHub Actions
 
+### Changed
+
+- [dep.] `iso8601` from 1.2.3 to 1.3.3
+
 ### Removed
 
 - Travis-CI
