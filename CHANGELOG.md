@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+- **support for OTP 21**
+- **support for OTP 20**
+- **support for OTP 19**
+- **support for OTP 18.3**
+- [dep.] `stacktrace_transform`
 - Travis-CI
 - Circle-CI
 

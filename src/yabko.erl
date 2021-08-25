@@ -70,15 +70,15 @@ decode(<<"bplist", Version:2/binary, EncodedPList/binary>>) when Version =:= <<"
     try yabko_bin:decode(EncodedPList, 8) of
         PList -> {ok, PList}
     catch
-        Class:Reason ->
-            {error, {exception, Class, Reason, erlang:get_stacktrace()}}
+        Class:Reason:Stacktrace ->
+            {error, {exception, Class, Reason, Stacktrace}}
     end;
 decode(<<EncodedPList/binary>>) ->
     try yabko_xml:decode(EncodedPList) of
         PList -> {ok, PList}
     catch
-        Class:Reason ->
-            {error, {exception, Class, Reason, erlang:get_stacktrace()}}
+        Class:Reason:Stacktrace ->
+            {error, {exception, Class, Reason, Stacktrace}}
     end;
 decode(IoData) ->
     Binary = iolist_to_binary(IoData),
