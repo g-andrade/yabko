@@ -14,6 +14,10 @@ ifeq ($(REBAR3),)
 	REBAR3 = $(CURDIR)/rebar3
 endif
 
+# On macOS, pick GNU utils whenever they're available (otherwise 'README.md-cicd' will fail)
+HEAD ?= $(shell test -e `which ghead` 2>/dev/null && which ghead || echo "head")
+TAIL ?= $(shell test -e `which gtail` 2>/dev/null && which gtail || echo "tail")
+
 .PHONY: all build clean check dialyzer xref test cover console doc publish
 
 .NOTPARALLEL: check
@@ -47,8 +51,17 @@ cover: test
 console: $(REBAR3)
 	@$(REBAR3) as development shell --apps yabko
 
-doc: build
-	./scripts/hackish_make_docs.sh
+doc: $(REBAR3)
+	@$(REBAR3) edoc
+
+README.md: doc
+	# non-portable dirty hack follows (pandoc 2.1.1 used)
+	# gfm: "github-flavoured markdown"
+	@pandoc --from html --to gfm doc/overview-summary.html -o README.md
+	@$(TAIL) -n +11 <"README.md"   >"README.md_"
+	@$(HEAD) -n -12 <"README.md_"  >"README.md"
+	@$(TAIL) -n  2  <"README.md_" >>"README.md"
+	@rm "README.md_"
 
 publish: $(REBAR3)
 	@$(REBAR3) as publication hex publish
