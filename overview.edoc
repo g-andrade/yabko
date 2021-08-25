@@ -1,9 +1,10 @@
 @title yabko
 @doc
 
-[![Hex pm](http://img.shields.io/hexpm/v/yabko.svg?style=flat)](https://hex.pm/packages/yabko)
-[![Travis CI Build Status](https://travis-ci.org/g-andrade/yabko.png?branch=master)](https://travis-ci.org/g-andrade/yabko)
-[![Circle CI Build Status](https://circleci.com/gh/g-andrade/yabko/tree/master.svg?style=svg)](https://circleci.com/gh/g-andrade/yabko/tree/master)
+<a target="_parent" href="https://hex.pm/packages/yabko" alt="Hex.pm Package">
+    <img src="https://img.shields.io/hexpm/v/yabko.svg?style=flat"/></a>
+<a target="_parent" href="https://github.com/g-andrade/yabko/actions?query=workflow%3Abuild" alt="CI Build Status">
+    <img src="https://github.com/g-andrade/yabko/workflows/build/badge.svg"/></a>
 
 == yabko - Erlang parser of Apple Property Lists (.plist) ==
 
