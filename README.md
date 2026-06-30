@@ -37,7 +37,9 @@
       <<"Owned foobars">> => 4321,
       <<"Pocket contents">> =>
           [42,<<"Lorem ipsum">>,{uid,123456}]}}
+```
 
+``` erlang
 % 3> {ok, BinEncoded} = file:read_file("test_data/float32.bin.plist").
 {ok,<<98,112,108,105,115,116,48,48,209,1,2,89,101,116,99,
       32,101,116,99,46,46,34,63,128,0,0,8,...>>}
