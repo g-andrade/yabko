@@ -60,7 +60,7 @@
 
 -define(DATE_EPOCH, ({{2001, 1, 1}, {0, 0, 0}})).
 
--define(assert(Condition, OrElse), ((Condition) orelse error(OrElse))).
+-define(ASSERT(Condition, OrElse), ((Condition) orelse error(OrElse))).
 
 %% ------------------------------------------------------------------
 %% Type Definitions
@@ -115,7 +115,7 @@ decode(EncodedPList, OffsetFromStart) ->
     RealOffsetTableOffset = OffsetTableOffset - OffsetFromStart,
     <<EncodedObjects:RealOffsetTableOffset/binary, OffsetTable/binary>> = EncodedObjectsAndOffsets,
     ObjectsPerOffset = decode_objects(EncodedObjects, Settings, OffsetFromStart),
-    ?assert(
+    ?ASSERT(
         map_size(ObjectsPerOffset) =< NumberOfObjects,
         {mismatched_number_of_objects, ObjectsPerOffset, NumberOfObjects}
     ),
@@ -309,50 +309,34 @@ reconstruct_tree(ResolvedObjects, #{root_object_id := RootObjectId}) ->
 reconstruct_tree_recur({term, Value}, _ResolvedObjects, _RefPath) ->
     Value;
 reconstruct_tree_recur({array, RefList}, ResolvedObjects, RefPath) ->
-    lists:map(
-        fun(Ref) ->
-            assert_lack_of_cycles(Ref, RefPath),
-            Value = maps:get(Ref, ResolvedObjects),
-            reconstruct_tree_recur(
-                Value, ResolvedObjects, [Ref | RefPath]
-            )
-        end,
-        RefList
-    );
+    resolve_refs(RefList, ResolvedObjects, RefPath);
 reconstruct_tree_recur({set, RefList}, ResolvedObjects, RefPath) ->
-    List =
-        lists:map(
-            fun(Ref) ->
-                assert_lack_of_cycles(Ref, RefPath),
-                Value = maps:get(Ref, ResolvedObjects),
-                reconstruct_tree_recur(
-                    Value, ResolvedObjects, [Ref | RefPath]
-                )
-            end,
-            RefList
-        ),
+    List = resolve_refs(RefList, ResolvedObjects, RefPath),
     Set = ordsets:from_list(List),
     ordsets:to_list(Set);
 reconstruct_tree_recur({map, RefKVList}, ResolvedObjects, RefPath) ->
     KVList =
         lists:map(
             fun({KeyRef, ValueRef}) ->
-                assert_lack_of_cycles(KeyRef, RefPath),
-                assert_lack_of_cycles(ValueRef, RefPath),
-                Key = maps:get(KeyRef, ResolvedObjects),
-                Value = maps:get(ValueRef, ResolvedObjects),
                 {
-                    reconstruct_tree_recur(
-                        Key, ResolvedObjects, [KeyRef | RefPath]
-                    ),
-                    reconstruct_tree_recur(
-                        Value, ResolvedObjects, [ValueRef | RefPath]
-                    )
+                    resolve_ref(KeyRef, ResolvedObjects, RefPath),
+                    resolve_ref(ValueRef, ResolvedObjects, RefPath)
                 }
             end,
             RefKVList
         ),
     maps:from_list(KVList).
+
+resolve_refs(RefList, ResolvedObjects, RefPath) ->
+    lists:map(
+        fun(Ref) -> resolve_ref(Ref, ResolvedObjects, RefPath) end,
+        RefList
+    ).
+
+resolve_ref(Ref, ResolvedObjects, RefPath) ->
+    assert_lack_of_cycles(Ref, RefPath),
+    Value = maps:get(Ref, ResolvedObjects),
+    reconstruct_tree_recur(Value, ResolvedObjects, [Ref | RefPath]).
 
 assert_lack_of_cycles(Ref, RefPathSoFar) ->
     lists:member(Ref, RefPathSoFar) andalso error({cycling_reference, Ref, RefPathSoFar}).

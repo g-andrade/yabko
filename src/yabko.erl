@@ -114,29 +114,29 @@ decode(IoData) ->
 -ifdef(TEST).
 
 bin_decode_test() ->
-    run_test__("test_data/test.bin.plist", {ok, expected_generic_test_data()}).
+    run_test_helper("test_data/test.bin.plist", {ok, expected_generic_test_data()}).
 
 xml_decode_test() ->
-    run_test__("test_data/test.xml.plist", {ok, expected_generic_test_data()}).
+    run_test_helper("test_data/test.xml.plist", {ok, expected_generic_test_data()}).
 
 uid_decode_bin_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
-    run_test__("test_data/uid-list.plist", {ok, expected_uid_test_data()}).
+    run_test_helper("test_data/uid-list.plist", {ok, expected_uid_test_data()}).
 
 uid_decode_xml_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
-    run_test__("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
+    run_test_helper("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
 
 bin_unicode_decode_test() ->
-    run_test__("test_data/unicode.bin.plist", {ok, expected_unicode_test_data()}).
+    run_test_helper("test_data/unicode.bin.plist", {ok, expected_unicode_test_data()}).
 
 xml_unicode_decode_test() ->
-    run_test__("test_data/unicode.xml.plist", {ok, expected_unicode_test_data()}).
+    run_test_helper("test_data/unicode.xml.plist", {ok, expected_unicode_test_data()}).
 
 float32_decode_test() ->
-    run_test__("test_data/float32.bin.plist", {ok, #{<<"etc etc..">> => 1.0}}).
+    run_test_helper("test_data/float32.bin.plist", {ok, #{<<"etc etc..">> => 1.0}}).
 
-run_test__(Path, ExpectedResult) ->
+run_test_helper(Path, ExpectedResult) ->
     {ok, Encoded} = file:read_file(Path),
     ?assertEqual(ExpectedResult, decode(Encoded)).
 
