@@ -58,7 +58,7 @@
 -define(SET, 12).
 -define(DICT, 13).
 
--define(DATE_EPOCH, ({{2001,1,1},{0,0,0}})).
+-define(DATE_EPOCH, ({{2001, 1, 1}, {0, 0, 0}})).
 
 -define(assert(Condition, OrElse), ((Condition) orelse error(OrElse))).
 
@@ -67,32 +67,34 @@
 %% ------------------------------------------------------------------
 
 -type settings() ::
-        #{ offset_size => 1..4,
-           ref_size => 1 | 2,
-           number_of_objects => uint32(),
-           root_object_id => uint32(),
-           offset_table_offset => offset() }.
+    #{
+        offset_size => 1..4,
+        ref_size => 1 | 2,
+        number_of_objects => uint32(),
+        root_object_id => uint32(),
+        offset_table_offset => offset()
+    }.
 
 -type uint32() :: 0..4294967295.
 
 -type offset() :: uint32().
 
 -type unresolved_objects() ::
-        #{ offset() => unresolved_object() }.
+    #{offset() => unresolved_object()}.
 
 -type unresolved_object() ::
-        {term, undefined} |
-        {term, boolean()} |
-        {term, yabko:int64()} |
-        {term, float()} |
-        {term, calendar:datetime()} |
-        {term, {uid, yabko:uint64()}} |
-        {array, [unresolved_object()]} |
-        {set, [unresolved_object()]} |
-        {map, [{binary(), unresolved_object()}]}.
+    {term, undefined}
+    | {term, boolean()}
+    | {term, yabko:int64()}
+    | {term, float()}
+    | {term, calendar:datetime()}
+    | {term, {uid, yabko:uint64()}}
+    | {array, [unresolved_object()]}
+    | {set, [unresolved_object()]}
+    | {map, [{binary(), unresolved_object()}]}.
 
 -type object_offsets() ::
-        #{ object_id() => offset() }.
+    #{object_id() => offset()}.
 
 -type object_id() :: uint32().
 
@@ -105,14 +107,18 @@ decode(EncodedPList, OffsetFromStart) ->
     TrailerOffset = byte_size(EncodedPList) - 32,
     <<EncodedObjectsAndOffsets:TrailerOffset/binary, Trailer:32/binary>> = EncodedPList,
     Settings = decode_trailer(Trailer),
-    #{ number_of_objects := NumberOfObjects,
-       offset_table_offset := OffsetTableOffset } = Settings,
+    #{
+        number_of_objects := NumberOfObjects,
+        offset_table_offset := OffsetTableOffset
+    } = Settings,
 
     RealOffsetTableOffset = OffsetTableOffset - OffsetFromStart,
     <<EncodedObjects:RealOffsetTableOffset/binary, OffsetTable/binary>> = EncodedObjectsAndOffsets,
     ObjectsPerOffset = decode_objects(EncodedObjects, Settings, OffsetFromStart),
-    ?assert(map_size(ObjectsPerOffset) =< NumberOfObjects,
-            {mismatched_number_of_objects, ObjectsPerOffset, NumberOfObjects}),
+    ?assert(
+        map_size(ObjectsPerOffset) =< NumberOfObjects,
+        {mismatched_number_of_objects, ObjectsPerOffset, NumberOfObjects}
+    ),
     OffsetPerObjectId = decode_object_offsets(OffsetTable, Settings),
     ResolvedObjects = resolve_object_refs(ObjectsPerOffset, OffsetPerObjectId),
     reconstruct_tree(ResolvedObjects, Settings).
@@ -122,26 +128,35 @@ decode(EncodedPList, OffsetFromStart) ->
 %% ------------------------------------------------------------------
 
 %-spec decode_trailer(nonempty_binary()) -> settings().
-decode_trailer(<<0,0,0,0,0,0, OffsetSize, RefSize,
-                 0,0,0,0, NumberOfObjects:32,
-                 0,0,0,0, RootObjectId:32,
-                 0,0,0,0, OffsetTableOffset:32>>)
-  when OffsetSize >= 1, OffsetSize =< 4,
-       RefSize >= 1, RefSize =< 2
+decode_trailer(
+    <<0, 0, 0, 0, 0, 0, OffsetSize, RefSize, 0, 0, 0, 0, NumberOfObjects:32, 0, 0, 0, 0,
+        RootObjectId:32, 0, 0, 0, 0, OffsetTableOffset:32>>
+) when
+    OffsetSize >= 1,
+    OffsetSize =< 4,
+    RefSize >= 1,
+    RefSize =< 2
 ->
-    #{ offset_size => OffsetSize, % in bytes
-       ref_size => RefSize, % in bytes
-       number_of_objects => NumberOfObjects,
-       root_object_id => RootObjectId,
-       offset_table_offset => OffsetTableOffset
-     }.
+    % in bytes
+    #{
+        offset_size => OffsetSize,
+        % in bytes
+        ref_size => RefSize,
+        number_of_objects => NumberOfObjects,
+        root_object_id => RootObjectId,
+        offset_table_offset => OffsetTableOffset
+    }.
 
 -spec decode_objects(binary(), settings(), non_neg_integer()) -> unresolved_objects().
 decode_objects(Bin, Settings, InitialOffset) ->
     decode_objects_recur(Bin, Settings, InitialOffset, []).
 
--spec decode_objects_recur(binary(), settings(), non_neg_integer(),
-                           [{offset(), unresolved_object()}]) -> unresolved_objects().
+-spec decode_objects_recur(
+    binary(),
+    settings(),
+    non_neg_integer(),
+    [{offset(), unresolved_object()}]
+) -> unresolved_objects().
 decode_objects_recur(<<>>, _Settings, _Offset, Acc) ->
     maps:from_list(Acc);
 decode_objects_recur(Bin, Settings, Offset, Acc) ->
@@ -180,13 +195,13 @@ decode_object(<<?UID:4, 2:4, UID:32, Rest/binary>>, _Settings) ->
     {{term, {uid, UID}}, Rest};
 decode_object(<<?UID:4, 3:4, UID:64, Rest/binary>>, _Settings) ->
     {{term, {uid, UID}}, Rest};
-decode_object(<<TypeTag:4, SizeTag:4, Rest/binary>>, Settings)
-  when TypeTag =:= ?BINARY;
-       TypeTag =:= ?ASCII;
-       TypeTag =:= ?UTF16;
-       TypeTag =:= ?ARRAY;
-       TypeTag =:= ?SET;
-       TypeTag =:= ?DICT
+decode_object(<<TypeTag:4, SizeTag:4, Rest/binary>>, Settings) when
+    TypeTag =:= ?BINARY;
+    TypeTag =:= ?ASCII;
+    TypeTag =:= ?UTF16;
+    TypeTag =:= ?ARRAY;
+    TypeTag =:= ?SET;
+    TypeTag =:= ?DICT
 ->
     {Size, Rest2} = decode_varsized_object_size(TypeTag, SizeTag, Settings, Rest),
     <<Data:Size/binary, Rest3/binary>> = Rest2,
@@ -248,7 +263,7 @@ decode_varsized_object_data(?DICT, Data, Settings) ->
     ValueRefs = decode_ref_sequence(EncodedValueRefs, Settings),
     {map, lists:zip(KeyRefs, ValueRefs)}.
 
-decode_ref_sequence(Data, #{ ref_size := RefSize }) ->
+decode_ref_sequence(Data, #{ref_size := RefSize}) ->
     decode_uint_sequence(Data, RefSize).
 
 %% ------------------------------------------------------------------
@@ -256,7 +271,7 @@ decode_ref_sequence(Data, #{ ref_size := RefSize }) ->
 %% ------------------------------------------------------------------
 
 -spec decode_object_offsets(binary(), settings()) -> object_offsets().
-decode_object_offsets(Data, #{ offset_size := OffsetSize }) ->
+decode_object_offsets(Data, #{offset_size := OffsetSize}) ->
     Offsets = decode_uint_sequence(Data, OffsetSize),
     KVList = enumerate(Offsets, 0),
     maps:from_list(KVList).
@@ -264,10 +279,12 @@ decode_object_offsets(Data, #{ offset_size := OffsetSize }) ->
 enumerate(List, Start) ->
     {Enumerated, _} =
         lists:mapfoldl(
-          fun (Value, Counter) ->
-                  {{Counter, Value}, Counter + 1}
-          end,
-          Start, List),
+            fun(Value, Counter) ->
+                {{Counter, Value}, Counter + 1}
+            end,
+            Start,
+            List
+        ),
     Enumerated.
 
 %% ------------------------------------------------------------------
@@ -276,12 +293,13 @@ enumerate(List, Start) ->
 
 resolve_object_refs(ObjectsPerOffset, OffsetPerObjectId) ->
     maps:map(
-      fun (_ObjectId, Offset) ->
-              maps:get(Offset, ObjectsPerOffset)
-      end,
-      OffsetPerObjectId).
+        fun(_ObjectId, Offset) ->
+            maps:get(Offset, ObjectsPerOffset)
+        end,
+        OffsetPerObjectId
+    ).
 
-reconstruct_tree(ResolvedObjects, #{ root_object_id := RootObjectId }) ->
+reconstruct_tree(ResolvedObjects, #{root_object_id := RootObjectId}) ->
     RootObject = maps:get(RootObjectId, ResolvedObjects),
     reconstruct_tree_recur(RootObject, ResolvedObjects, [RootObjectId]).
 
@@ -292,39 +310,48 @@ reconstruct_tree_recur({term, Value}, _ResolvedObjects, _RefPath) ->
     Value;
 reconstruct_tree_recur({array, RefList}, ResolvedObjects, RefPath) ->
     lists:map(
-      fun (Ref) ->
-              assert_lack_of_cycles(Ref, RefPath),
-              Value = maps:get(Ref, ResolvedObjects),
-              reconstruct_tree_recur(
-                Value, ResolvedObjects, [Ref | RefPath])
-      end,
-      RefList);
+        fun(Ref) ->
+            assert_lack_of_cycles(Ref, RefPath),
+            Value = maps:get(Ref, ResolvedObjects),
+            reconstruct_tree_recur(
+                Value, ResolvedObjects, [Ref | RefPath]
+            )
+        end,
+        RefList
+    );
 reconstruct_tree_recur({set, RefList}, ResolvedObjects, RefPath) ->
     List =
         lists:map(
-          fun (Ref) ->
-                  assert_lack_of_cycles(Ref, RefPath),
-                  Value = maps:get(Ref, ResolvedObjects),
-                  reconstruct_tree_recur(
-                    Value, ResolvedObjects, [Ref | RefPath])
-          end,
-          RefList),
+            fun(Ref) ->
+                assert_lack_of_cycles(Ref, RefPath),
+                Value = maps:get(Ref, ResolvedObjects),
+                reconstruct_tree_recur(
+                    Value, ResolvedObjects, [Ref | RefPath]
+                )
+            end,
+            RefList
+        ),
     Set = ordsets:from_list(List),
     ordsets:to_list(Set);
 reconstruct_tree_recur({map, RefKVList}, ResolvedObjects, RefPath) ->
     KVList =
         lists:map(
-          fun ({KeyRef, ValueRef}) ->
-                  assert_lack_of_cycles(KeyRef, RefPath),
-                  assert_lack_of_cycles(ValueRef, RefPath),
-                  Key = maps:get(KeyRef, ResolvedObjects),
-                  Value = maps:get(ValueRef, ResolvedObjects),
-                  {reconstruct_tree_recur(
-                     Key, ResolvedObjects, [KeyRef | RefPath]),
-                   reconstruct_tree_recur(
-                     Value, ResolvedObjects, [ValueRef | RefPath])}
-          end,
-          RefKVList),
+            fun({KeyRef, ValueRef}) ->
+                assert_lack_of_cycles(KeyRef, RefPath),
+                assert_lack_of_cycles(ValueRef, RefPath),
+                Key = maps:get(KeyRef, ResolvedObjects),
+                Value = maps:get(ValueRef, ResolvedObjects),
+                {
+                    reconstruct_tree_recur(
+                        Key, ResolvedObjects, [KeyRef | RefPath]
+                    ),
+                    reconstruct_tree_recur(
+                        Value, ResolvedObjects, [ValueRef | RefPath]
+                    )
+                }
+            end,
+            RefKVList
+        ),
     maps:from_list(KVList).
 
 assert_lack_of_cycles(Ref, RefPathSoFar) ->

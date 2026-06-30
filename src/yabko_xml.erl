@@ -58,7 +58,7 @@ decode(Binary) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
-decode_root(#xmlElement{ name = plist } = Element) ->
+decode_root(#xmlElement{name = plist} = Element) ->
     Children = Element#xmlElement.content,
     [RootElement] = filter_relevant_sequence_elements(Children),
     decode_element(RootElement).
@@ -66,29 +66,29 @@ decode_root(#xmlElement{ name = plist } = Element) ->
 %%
 %% TODO null?
 %%
-decode_element(#xmlElement{ name = false }) ->
+decode_element(#xmlElement{name = false}) ->
     false;
-decode_element(#xmlElement{ name = true }) ->
+decode_element(#xmlElement{name = true}) ->
     true;
-decode_element(#xmlElement{ name = integer } = Element) ->
+decode_element(#xmlElement{name = integer} = Element) ->
     EncodedInt = extract_element_text(Element, latin1),
     Int = binary_to_integer(EncodedInt),
     true = ?is_int64(Int),
     Int;
-decode_element(#xmlElement{ name = real } = Element) ->
+decode_element(#xmlElement{name = real} = Element) ->
     EncodedFloat = extract_element_text(Element, latin1),
     binary_to_float(EncodedFloat);
-decode_element(#xmlElement{ name = date } = Element) ->
+decode_element(#xmlElement{name = date} = Element) ->
     EncodedDate = extract_element_text(Element, latin1),
     iso8601:parse(EncodedDate);
-decode_element(#xmlElement{ name = data } = Element) ->
+decode_element(#xmlElement{name = data} = Element) ->
     EncodedData = extract_element_text(Element, latin1),
     base64:decode(EncodedData);
-decode_element(#xmlElement{ name = string } = Element) ->
+decode_element(#xmlElement{name = string} = Element) ->
     extract_element_text(Element, utf8);
-decode_element(#xmlElement{ name = array } = Element) ->
+decode_element(#xmlElement{name = array} = Element) ->
     decode_elements(Element#xmlElement.content);
-decode_element(#xmlElement{ name = dict } = Element) ->
+decode_element(#xmlElement{name = dict} = Element) ->
     decode_dict_elements(Element#xmlElement.content).
 
 decode_elements(List) ->
@@ -102,7 +102,7 @@ decode_dict_elements(Elements) ->
 decode_dict_elements_recur([KeyElement, ValueElement | Next], Acc) ->
     Key = extract_key_element_text(KeyElement),
     Value = decode_element(ValueElement),
-    decode_dict_elements_recur(Next, [{Key,Value} | Acc]);
+    decode_dict_elements_recur(Next, [{Key, Value} | Acc]);
 decode_dict_elements_recur([], Acc) ->
     case Acc of
         [{<<"CF$UID">>, Integer}] when ?is_uint64(Integer) ->
@@ -112,12 +112,12 @@ decode_dict_elements_recur([], Acc) ->
             maps:from_list(Acc)
     end.
 
-extract_key_element_text(#xmlElement{ name = key } = Element) ->
+extract_key_element_text(#xmlElement{name = key} = Element) ->
     extract_element_text(Element, utf8).
 
 extract_element_text(Element, InEncoding) ->
     Content = Element#xmlElement.content,
-    #xmlText{ value = Text } = lists:keyfind(xmlText, 1, Content),
+    #xmlText{value = Text} = lists:keyfind(xmlText, 1, Content),
     <<Binary/binary>> = unicode:characters_to_binary(Text, InEncoding),
     binary:copy(Binary).
 
