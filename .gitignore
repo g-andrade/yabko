@@ -8,6 +8,7 @@ _*
 *.swo
 .erlang.cookie
 ebin
+deps
 log
 erl_crash.dump
 .rebar
@@ -16,3 +17,9 @@ _build
 .idea
 *.iml
 rebar3.crashdump
+/doc/
+/.claude/settings.local.json
+/tmp/
+
+# asdf
+.tool-versions
