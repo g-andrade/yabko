@@ -1,10 +1,8 @@
 # yabko
 
-**This library is not under active maintenance; if you'd like to perform
-maintenance yourself, feel free to open an issue requesting access.**
-
 [![](https://img.shields.io/hexpm/v/yabko.svg?style=flat)](https://hex.pm/packages/yabko)
-[![](https://github.com/g-andrade/yabko/workflows/build/badge.svg)](https://github.com/g-andrade/yabko/actions?query=workflow%3Abuild)
+[![](https://github.com/g-andrade/yabko/actions/workflows/ci.yml/badge.svg)](https://github.com/g-andrade/yabko/actions/workflows/ci.yml)
+[![Erlang Versions](https://img.shields.io/badge/Supported%20Erlang%2FOTP-24%20to%2029-blue)](https://www.erlang.org)
 
 `yabko` is an Erlang parser of Apple Property Lists (.plist)
 
@@ -26,7 +24,7 @@ maintenance yourself, feel free to open an issue requesting access.**
 
 ### Example Usage
 
-    $ make console
+    $ make shell
 
 ``` erlang
 % 1> {ok, XmlEncoded} = file:read_file("test_data/doc_example.xml").
