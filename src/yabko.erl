@@ -23,6 +23,15 @@
 
 -module(yabko).
 
+-ifdef(E48).
+-moduledoc """
+A parser of Apple Property Lists (.plist).
+
+Both the XML and the binary (`bplist`) encodings are decoded through the
+single entry point `decode/1`.
+""".
+-endif.
+
 -include("yabko_common.hrl").
 
 -ifdef(TEST).
@@ -39,6 +48,9 @@
 %% Type Definitions
 %% ------------------------------------------------------------------
 
+-ifdef(E48).
+-doc "A decoded property list value.".
+-endif.
 -type object() ::
         undefined |
         boolean() |
@@ -60,6 +72,15 @@
 %% API Function Definitions
 %% ------------------------------------------------------------------
 
+-ifdef(E48).
+-doc """
+Decode an encoded property list.
+
+`Data` may hold either the XML or the binary (`bplist`) representation; the
+format is detected automatically. Returns `{ok, DecodedObject}` on success or
+`{error, {exception, Class, Reason, Stacktrace}}` if decoding raised.
+""".
+-endif.
 -spec decode(Data) -> {ok, DecodedObject} | {error, Error}
         when Data :: iodata(),
              DecodedObject :: object(),
@@ -89,42 +110,33 @@ decode(IoData) ->
 %% ------------------------------------------------------------------
 -ifdef(TEST).
 
-%% @private
 bin_decode_test() ->
     run_test__("test_data/test.bin.plist", {ok, expected_generic_test_data()}).
 
-%% @private
 xml_decode_test() ->
     run_test__("test_data/test.xml.plist", {ok, expected_generic_test_data()}).
 
-%% @private
 uid_decode_bin_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.plist", {ok, expected_uid_test_data()}).
 
-%% @private
 uid_decode_xml_test() ->
     % taken from https://github.com/rodneyrehm/CFPropertyList
     run_test__("test_data/uid-list.xml", {ok, expected_uid_test_data()}).
 
-%% @private
 bin_unicode_decode_test() ->
     run_test__("test_data/unicode.bin.plist", {ok, expected_unicode_test_data()}).
 
-%% @private
 xml_unicode_decode_test() ->
     run_test__("test_data/unicode.xml.plist", {ok, expected_unicode_test_data()}).
 
-%% @private
 float32_decode_test() ->
     run_test__("test_data/float32.bin.plist", {ok, #{<<"etc etc..">> => 1.0}}).
 
-%% @private
 run_test__(Path, ExpectedResult) ->
     {ok, Encoded} = file:read_file(Path),
     ?assertEqual(ExpectedResult, decode(Encoded)).
 
-%% @private
 expected_generic_test_data() ->
     #{<<"Lincoln">> =>
       #{<<"DOB">> => {{1809,2,12},{9,18,0}},
@@ -152,14 +164,12 @@ expected_generic_test_data() ->
         <<"Name">> => <<"George Washington">>,
         <<"Scores">> => [6,4.599999904632568,6]}}.
 
-%% @private
 expected_uid_test_data() ->
     #{<<"small">> => {uid,1},
       <<"medium">> => {uid,256},
       <<"large">> => {uid,65536},
       <<"huge">> => {uid,4294967296}}.
 
-%% @private
 expected_unicode_test_data() ->
     #{<<"A thing">> =>
       <<"他度於樂。實術醫收參不民對續子義發性親的論草像終因："

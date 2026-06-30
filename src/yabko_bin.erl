@@ -21,15 +21,18 @@
 %% Yabko is an independent project and has not been authorized, sponsored,
 %% or otherwise approved by Apple Inc.
 
-%% @reference
+%% References:
 %%
-%% * [http://fileformats.archiveteam.org/wiki/Property_List/Binary](http://fileformats.archiveteam.org/wiki/Property_List/Binary)
-%% * [https://en.wikipedia.org/wiki/Property_list#macOS](https://en.wikipedia.org/wiki/Property_list#macOS)
-%% * [https://www.taksati.org/plists/](https://www.taksati.org/plists/)
+%% * http://fileformats.archiveteam.org/wiki/Property_List/Binary
+%% * https://en.wikipedia.org/wiki/Property_list#macOS
+%% * https://www.taksati.org/plists/
 %% * and misc. references glimpsed around the web
 
-%% @private
 -module(yabko_bin).
+
+-ifdef(E48).
+-moduledoc false.
+-endif.
 
 -include("yabko_common.hrl").
 

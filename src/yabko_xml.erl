@@ -21,8 +21,11 @@
 %% Yabko is an independent project and has not been authorized, sponsored,
 %% or otherwise approved by Apple Inc.
 
-%% @private
 -module(yabko_xml).
+
+-ifdef(E48).
+-moduledoc false.
+-endif.
 
 -include_lib("xmerl/include/xmerl.hrl").
 -include("yabko_common.hrl").
